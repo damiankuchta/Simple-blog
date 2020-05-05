@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="card">
+        <div class="card card-body">
+            <img src="{{ post.get_picture_path }}" alt="no_pciture">
+            {{ post.title }} <br>
+            {{ post.content }} <br>
+            {{ post.date }} {{ post.created_by}} <br>
+            {% for hash_tag in post.hash_tags.all %}
+                <a href="{% url 'posts' %}?hash_tag={{ hash_tag }}" >{{ hash_tag }}</a>
+            {% endfor %}
+        </div>
+    </div>
+    {%  if request.user.is_authenticated %}
+        <form method="post" action="{% url "post" post.id %}">
+            {% csrf_token %}
+            {{ comment_form }}
+            <button type="submit">submit</button>
+        </form>
+    {% endif %}
+
+    {% for comment in comments %}
+        {% include "comments_app/comment.html" with comment=comment %}
+    {% endfor %}
+
+
+{% endblock %}
+
+

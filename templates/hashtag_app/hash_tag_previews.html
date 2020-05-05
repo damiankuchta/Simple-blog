@@ -1,0 +1,4 @@
+{% load hitcount_tags %}
+{% for hash_tag in hash_tags %}
+    <a href="{% url "posts"  %}?hash_tag={{ hash_tag.hash_tag }}">{{ hash_tag.hash_tag }} ({{ hash_tag.amount_oF_posts }})</a>
+{% endfor %}

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load add_query_parameter %}
+{% load hitcount_tags %}
+
+{% block title %}
+    Posts
+{% endblock %}
+
+
+{% block content %}
+
+    <ul class="list-inline">
+        Sort By:
+        <li class="list-inline-item" ><a href="?{% add_query_parameter request "sort_by" "date" %}">Date up</a></li>
+        <li class="list-inline-item" ><a href="?{% add_query_parameter request "sort_by" "-date" %}">Date down</a></li>
+        <li class="list-inline-item" ><a href="?{% add_query_parameter request "sort_by" "title" %}">Title up</a></li>
+        <li class="list-inline-item" ><a href="?{% add_query_parameter request "sort_by" "-title" %}">Title down</a></li>
+        <li class="list-inline-item" ><a href="?{% add_query_parameter request "sort_by" "-title" %}">Title down</a></li>
+        <li class="list-inline-item" ><a href="?{% add_query_parameter request "sort_by" "-title" %}">Title down</a></li>
+        <li class="list-inline-item" ><a href="?{% add_query_parameter request "sort_by" "hit_count_generic__hits" %}">Popularity up</a></li>
+        <li class="list-inline-item" ><a href="?{% add_query_parameter request "sort_by" "-hit_count_generic__hits" %}">Popularity down</a></li>
+        <li class="list-inline-item" ><a href="?{% add_query_parameter request "sort_by" "num_comments" %}">Commented up</a></li>
+        <li class="list-inline-item" ><a href="?{% add_query_parameter request "sort_by" "-num_comments" %}">Commented down</a></li>
+    </ul>
+
+    {% for post in page.object_list %}
+        <div class="card mt-4">
+            <div class="card card-header">
+                <img src="{{ post.get_picture_path }}" alt="no_pciture">
+               <a href=" {%  url "post" post.id %}">{{ post.title }}</a> {{ post.date }}
+            </div>
+            <div class="card card-body">
+                {{ post.content|slice:400 }}... <a  href=" {%  url "post" post.id %}">more</a> <br>
+                Comments : {{ post.comments.all.count }}
+                {% for hash_tag in post.hash_tags.all %}
+                   <a href="{% url "posts"  %}?hash_tag={{ hash_tag }}">{{ hash_tag }}</a>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+    .
+<div class="pagination">
+    <span class="step-links">
+        {% if page.has_previous %}
+            <a href="{% url 'posts_page' 1 %}?{{ request.GET.urlencode }}">&laquo; first</a>
+            <a href="{% url 'posts_page' page.previous_page_number %}?{{ request.GET.urlencode }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page.number }} of {{ page.paginator.num_pages }}.
+        </span>
+
+        {% if page.has_next %}
+            <a href="{% url 'posts_page' 1 %}?{{ request.GET.urlencode }}">&laquo; Last</a>
+            <a href="{% url 'posts_page' page.next_page_number %}?{{ request.GET.urlencode }}">next</a>
+        {% endif %}
+    </span>
+</div>
+{% endblock %}
